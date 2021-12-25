@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script>
+
+	function authenticationSave() {
+		
+		const userData = [];
+		const message = [ "아이디", "패쓰워드입력" ];
+		userData[0] = document.getElementsByName("pname")[0]; 
+		userData[1] = document.getElementsByName("nickname")[0];
+		userData[2] = document.getElementsByName("phonenum")[0];
+		userData[3] = document.getElementsByName("ppassword")[0];
+		const f = document.getElementsByName("first_page")[0]; 
+
+		
+		for (let index = 0; index < userData.length; index++) {
+			if (!isEmpty(userData[index])) {
+				alert(message[index]);
+				return;
+			} else {
+				
+			}
+		}
+		
+		f.submit(); 
+	}
+	function isEmpty(obj) {
+		let check = true;
+		if (obj.value == "") {
+			check = false;
+		}
+		return check;
+	}
+	
+	function back() {
+		
+		history.go(-1);
+	}
+
+</script>
+<style>
+	
+	body		{
+				background-image:url(image/background.png);
+				background-position:left top;
+				background-repeat:no-repeat;
+				background-size:cover;
+				}
+	
+	#outSide	{
+				margin-top:2%;
+				margin-left:15%;
+				font-size:23pt;
+				line-height:80px;
+				color:#FFFFFF;
+				}
+				
+	#outLine	{
+				border: 2px solid black;
+				height:580px;
+				}
+				
+	input		{
+				height:50px;
+				}
+	
+	.tx			{
+				text-align:center;
+				}
+	
+	#txOne		{
+				margin-left:10%;
+				padding-left:41%;
+				padding-right:7%;
+				}
+	
+	#txTwo		{
+				margin-left:7%;
+				padding-left:41%;
+				}
+	
+	#txThree	{
+				margin-left:4%;
+				padding-left:41%;
+				padding-right:7%;
+				}
+	
+	#txFour		{
+				margin-left:4%;
+				padding-left:41%;
+				padding-right:7%;
+				}
+	
+	#ba			{
+				padding-left:5%;
+				padding-right:5%;
+				}
+				
+	#sa			{
+				margin-left:48%;
+				padding-left:6.5%;
+				padding-right:6.5%;
+				}
+				
+	#top		{
+				font-size:25pt;
+				margin-top:4%;
+				margin-left:38%;
+				color:#FF24A3;
+				}
+					
+</style>
+</head>
+<body>
+	<div id="outLine">
+		<div id="top">
+			<strong>[   회 / 원 / 가 / 입   ]</strong>
+		</div>
+		<div id="outSide">	
+			<div>
+				<span class="tx">이름</span>
+				<span><input type="text" id="txOne" name="pname" placeholder="이름" /></span>
+			</div>
+			<div>
+				<span class="tx">닉네임</span>
+				<span><input type="text" id="txTwo" name="nickname" placeholder="닉네임" /></span>
+				<span><input type="button" id="che" value="중복확인" /></span>
+			</div>
+			<div>
+				<span class="tx">전화번호</span>
+				<span><input type="text" id="txThree" name="phonenum" placeholder="전화번호" /></span>
+			</div>
+			<div>
+				<span class="tx">비밀번호</span>
+				<span><input type="password" id="txFour" name="ppassword" placeholder="비밀 번호" /></span>
+			</div>
+			<div id="ba_tx">
+				<span class="tx_po"><input type="button" id="ba" value="뒤로가기" onClick="back();" /></span>
+				<span class="tx_po"><input type="button" id="sa" value="저장" onClick="authenticationSave()" /></span>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
