@@ -15,7 +15,7 @@ import services.auth.Authentication;
 
 
 
-@WebServlet({"/Go","/Out"})
+@WebServlet({"/Go","/Out","/idChe","/makeMember","/indigo"})
 public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    
@@ -59,7 +59,12 @@ public class FrontController extends HttpServlet {
 				
 				auth = new Authentication(req);
 				action = auth.backController(1);
+					
+			}else if(jobCode.equals("indigo")){
 				
+				auth = new Authentication(req);
+				action = auth.backController(4);
+					
 			}else{
 
 				action = new Action();
@@ -69,9 +74,26 @@ public class FrontController extends HttpServlet {
 		}
 		 else {
 			if (jobCode.equals("Go")) {
+				
 				auth = new Authentication(req);
 				action = auth.backController(1);
-			} else {
+				
+			}else if(jobCode.equals("idChe")) {
+				
+				auth = new Authentication(req);
+				action = auth.backController(2);
+				
+			}else if(jobCode.equals("makeMember")) {
+				
+				auth = new Authentication(req);
+				action = auth.backController(3);
+				
+			}else if(jobCode.equals("indigo")){
+				
+				auth = new Authentication(req);
+				action = auth.backController(4);
+					
+			}else {
 				action = new Action();
 				action.setRedirect(true);
 				action.setPage("index.html");

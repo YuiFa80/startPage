@@ -7,14 +7,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import bean.MembersInfo;
+import bean.PcRoom;
 import bean.Action;
 
 
 public class Authentication {
 	private HttpSession session;
 	private HttpServletRequest req;
-	private DataAccessObject dao;
+	private DataAccessOb dao;
 	private MembersInfo mi;
+	private PcRoom pc;
 	private Action action;
 
 	public Authentication(HttpServletRequest req) {
@@ -31,60 +33,133 @@ public class Authentication {
 		case -1:
 			action = this.accessOutCtl();
 			break;
+		case 2:
+			action = this.idCheckCtl();
+			break;
 
 		case 0:
 			action = this.afterAccess();
+			break;
+		case 3:
+			action = this.setMembers();
+			break;
+		case 4:
+			action = this.accessCtlTwo();
 			break;
 		default:
 		}
 		return action;
 	}
-	
-	private Action accessCtl() {
-		System.out.println(this.req.getParameter("nickName"));
+	//===============================두번째 화면 멤버이름&피씨방이름 표출
+	private Action accessCtlTwo() {
+
 		Action action = new Action();
-		ArrayList<MembersInfo> list = null;
+		boolean tran = false;
 		
+		this.mi = new MembersInfo();
+		this.mi.setNickName(this.req.getParameter("nickName"));
+		this.pc = new PcRoom();
+		this.pc.setPcName("인디고PC방");
+
+		dao = new DataAccessOb();
+		Connection conn = dao.getConnection();
+		dao.modifyTranStatus(conn, false);
+		
+		session = this.req.getSession();
+		session.setAttribute("pcName", pc.getPcName());
+		
+		req.setAttribute("nickName", mi.getNickName());
+		req.setAttribute("pcRoomName", pc.getPcName());
+		
+		tran = true;
+		
+		action.setPage(tran ? "mainOne.jsp" : "main.jsp");
+		action.setRedirect(tran ? false : true);
+
+		dao.setTransaction(conn, tran);
+		dao.modifyTranStatus(conn, true);
+		dao.closeConnection(conn);
+
+		return action;
+	}
+	//===============================회원가입
+	private Action setMembers() {
+		Action action = new Action();
+		boolean tran = false;
+		
+		this.mi = new MembersInfo();
+		this.mi.setNickName(this.req.getParameter("nickname"));
+		this.mi.setMemName(this.req.getParameter("pName"));
+		this.mi.setPhoneNum(this.req.getParameter("phonenum"));
+		this.mi.setPassWord(this.req.getParameter("pPassword"));
+		
+		dao = new DataAccessOb();
+		Connection conn = dao.getConnection();
+		dao.modifyTranStatus(conn, false);
+		
+		if(dao.setMember(conn, mi)) {
+			tran =true;
+		}
+
+		action.setPage(tran ? "main.html" : "signin.html");
+		action.setRedirect(tran ? false : true);
+
+		dao.setTransaction(conn, tran);
+		dao.modifyTranStatus(conn, true);
+		dao.closeConnection(conn);
+
+		return action;
+	}
+	
+	
+	private Action idCheckCtl() {
+		Action action = new Action();
+
 		boolean tran = false;
 
-		// 1.추출해서 bean에 저장 -->>Employees :: srCode, emCode, emPassword
+		this.mi = new MembersInfo();
+		this.mi.setNickName(this.req.getParameter("idinput"));
+
+		dao = new DataAccessOb();
+		Connection conn = dao.getConnection();
+		dao.modifyTranStatus(conn, false);
+
+		if (dao.idCheckInfo(conn, mi)) {
+			req.setAttribute("accessInfo", mi.getNickName());
+			tran = true;
+		}
+
+		action.setPage(tran ? "idCheckResult.jsp" : "idCheckFalse.jsp");
+		action.setRedirect(tran ? false : true);
+
+		dao.setTransaction(conn, tran);
+		dao.modifyTranStatus(conn, true);
+		dao.closeConnection(conn);
+
+		return action;
+	}
+
+	private Action accessCtl() {
+		
+		Action action = new Action();
+		
+
+		boolean tran = false;
 		this.mi = new MembersInfo();
 		this.mi.setNickName(this.req.getParameter("nickName"));
 		this.mi.setPassWord(this.req.getParameter("pPassword"));
 		this.mi.setState(1);
 
-		// 2.DAO 연동(insert(1,0) -->> boolean , select -->>ArrayList ,update(update된 갯수-->)
-		dao = new DataAccessObject();
+		dao = new DataAccessOb();
 		Connection conn = dao.getConnection();
 		dao.modifyTranStatus(conn, false);
-		// 2-1::STORES에서 SRCode 존재여부 확인
-		// 2-2::EMPLOYEES에서 EMCODE 존재여부 확인
-		// 2-3::EMPLOYEES에서 PASSWORD 일치 여부확인 :: RETURN : 1 >> 2-4
-		// 2-4::ACCESSHISTORY:INSERT::RETURN:1
-		// 2-5::정보취합 -->>ARRAYLIST<EMPLOYEES>
-		// 성공했으면 main.jsp
-		// 실패했으면 index.html
 
-		
-			
-			if (dao.isMembers(conn, mi)) {
-				
-				if (dao.insAccessHistory(conn, mi)) {
-					tran = true;
-					System.out.println(mi.getNickName());
-					//(섹션)▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-					session = this.req.getSession();
-					session.setAttribute("nickName", mi.getNickName());
-					//(섹션)▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-					if ((list = dao.getAccessInfo(conn, mi)) != null) {
-						
-						req.setAttribute("accessInfo", list); //>>필요한 작업
-						System.out.println(list);
-					}
-				}
-			}
-		
+		if (dao.isMember(conn, mi)) {
 
+			req.setAttribute("accessInfo", mi.getNickName());
+			tran = true;
+		}
+		System.out.println(mi.getNickName());
 		action.setPage(tran ? "main.jsp" : "index.html");
 		action.setRedirect(tran ? false : true);
 
@@ -94,9 +169,11 @@ public class Authentication {
 
 		return action;
 	}
+
 	private Action accessOutCtl() {
 		return action;
 	}
+
 	private Action afterAccess() {
 		return action;
 	}

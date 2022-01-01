@@ -3,13 +3,19 @@ package bean;
 public class MembersInfo {
 	private String memName;
 	private String nickName;
-	private int phoneNum;
+	private String phoneNum;
 	private String passWord;
 	private String accessTime;
 	private int state;
 	
-
 	// ============================================================
+	public String getPhoneNum() {
+		return phoneNum;
+	}
+
+	public void setPhoneNum(String phoneNum) {
+		this.phoneNum = phoneNum;
+	}
 	public String getAccessTime() {
 		return accessTime;
 	}
@@ -43,13 +49,7 @@ public class MembersInfo {
 		this.nickName = nickName;
 	}
 
-	public int getPhoneNum() {
-		return phoneNum;
-	}
-
-	public void setPhoneNum(int phoneNum) {
-		this.phoneNum = phoneNum;
-	}
+	
 
 	public String getPassWord() {
 		return passWord;

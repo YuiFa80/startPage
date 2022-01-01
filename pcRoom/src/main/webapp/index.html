@@ -11,8 +11,7 @@
 		const message = [ "아이디", "패쓰워드입력" ];
 		userData[0] = document.getElementsByName("nickName")[0]; 
 		userData[1] = document.getElementsByName("pPassword")[0];
-		const f = document.getElementsByName("first_page")[0]; 
-
+		const f = document.getElementsByName("first_page")[0];
 		
 		for (let index = 0; index < userData.length; index++) {
 			if (!isEmpty(userData[index])) {
@@ -41,9 +40,9 @@
 		opener.location.href="signin.html";
 		self.close();
 	}
-	
 </script>
 <style>
+
 	body		{background-color:rgb(192, 192, 192);}
 	.but		{
 				float:left;
@@ -62,7 +61,6 @@
 				}
 	#con		{background-color:#747474;
 				margin:0 5% 0 0;
-				
 				}
 	#mem		{background-color:#747474;
 				margin:0 0 0 0;
@@ -72,6 +70,9 @@
 				margin-top:1%;
 				}
 	input		{height:40px;}
+	
+	.but:hover { background-color: white; }
+	
 </style>
 </head>
 <body>
@@ -82,8 +83,8 @@
 		<div id="iD" class="tx"><input type="text" name="nickName" placeholder="아이디" style="width: 98%"/></div>
 		<div class="tx"><input type="password" name="pPassword" placeholder="비밀 번호" style="width: 98%"/></div>
 		<div><img alt="move" src="image/line.jpg" style="width: 100%"/></div>
-		<div> <input type="button" id="con" class="but" value="접속하기" onClick="authentication()"/></div>
-		<div> <input type="button" id="mem" class="but" value="회원가입" onClick="moveClose();"/></div>
+		<div> <input type="button" id="con" class="but" value="접속하기" onmouseover="this.style.backgroundColor='#FFFFFF';" onmouseout="this.style.backgroundColor='#747474';" onClick="authentication()"/></div>
+		<div> <input type="button" id="mem" class="but" value="회원가입" onmouseover="this.style.backgroundColor='#FFFFFF';" onmouseout="this.style.backgroundColor='#747474';" onClick="moveClose();"/></div>
 		<div id="floor"><strong>※ 천리안은 회원만 이용하실 수 있습니다.</strong></div>
 	</form>
 </body>

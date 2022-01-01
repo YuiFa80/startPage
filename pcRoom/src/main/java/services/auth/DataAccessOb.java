@@ -8,18 +8,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import bean.MembersInfo;
+import bean.PcRoom;
 
-
-
-
-public class DataAccessObject { 
+public class DataAccessOb {
 	
 	ResultSet rs;
 	PreparedStatement psmt;
 	MembersInfo mi;
 	
 
-	public DataAccessObject() {
+	public DataAccessOb() {
 
 		rs = null;
 		psmt = null;
@@ -103,7 +101,7 @@ public class DataAccessObject {
 
 		boolean result = false;
 
-		String query = "INSERT INTO AINFO(AI_MIID, AI_STIME, AI_STATE) "
+		String query = "INSERT INTO ACCESSHISTORY(AH_USID, AI_STIME, AI_STATE) "
 					+ "VALUES(?,DEFAULT,?)";
 
 		try {
@@ -127,7 +125,7 @@ public class DataAccessObject {
 		}
 		return result;
 	}
-
+	
 	/* getAccessInfo */
 	public ArrayList<MembersInfo> getAccessInfo(Connection connection, MembersInfo mi){
 		ArrayList<MembersInfo> list = new ArrayList<MembersInfo>();
@@ -164,25 +162,54 @@ public class DataAccessObject {
 		return list;
 	}
 	//=============================================================================
+	boolean idCheckInfo(Connection connection, MembersInfo mi) {
 
+		ResultSet rs = null;
+		boolean result = false;
+		
+		String sql = "SELECT COUNT(*) FROM US WHERE US_ID = ?";
+
+		try {
+			this.psmt = connection.prepareStatement(sql);
+			this.psmt.setNString(1, mi.getNickName());
+			
+
+			rs = this.psmt.executeQuery();
+			
+			while (rs.next()) {
+				
+				result = this.convertToBoolean(rs.getInt(1));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (!rs.isClosed())
+					rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return result;
+	}
 
 		/* id && comparePassword -- 처음 로그인 할때*/
-		boolean isMembers(Connection connection, MembersInfo mi) {
-			
+		boolean isMember(Connection connection, MembersInfo mi) {
+
 			ResultSet rs = null;
 			boolean result = false;
-			
-			String sql = "SELECT COUNT(*) FROM TESTMI WHERE MI_ID = ? AND MI_PW = ?";
-			
+
+			String sql = "SELECT COUNT(*) FROM US WHERE US_ID = ? AND US_PASSWORD = ?";
+
 			try {
 				this.psmt = connection.prepareStatement(sql);
 				this.psmt.setNString(1, mi.getNickName());
 				this.psmt.setNString(2, mi.getPassWord());
-
 				rs = this.psmt.executeQuery();
-				
+
 				while (rs.next()) {
-					
+
 					result = this.convertToBoolean(rs.getInt(1));
 				}
 			} catch (Exception e) {
@@ -198,6 +225,35 @@ public class DataAccessObject {
 
 			return result;
 		}
+		//============================회원등록
+		public boolean setMember(Connection connection, MembersInfo mi) {
+
+			boolean result = false;
+
+			String query = "INSERT INTO US(US_ID, US_NAME, US_NUMBER, US_PASSWORD)"
+						+ "VALUES(?,?,?,?)";
+
+			try {
+				psmt = connection.prepareStatement(query);
+				psmt.setNString(1, mi.getNickName());
+				psmt.setNString(2, mi.getMemName());
+				psmt.setNString(3, mi.getPhoneNum());
+				psmt.setNString(4, mi.getPassWord());
+				
+				result = this.convertToBoolean(psmt.executeUpdate());
+				
+			} catch (SQLException e) {
+
+				e.printStackTrace();
+			} finally {
+				try {
+					if (!psmt.isClosed()) {
+						psmt.isClosed();
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return result;
+		}
 }
-
-
